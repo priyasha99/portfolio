@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Priyasha Setia</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        #terminal {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap; /* This property wraps text and respects line breaks */
+            max-width: 100%; /* Ensure it does not exceed the device's horizontal proportions */
+        }
+
+        #terminal .pointer {
+            display: inline-block;
+            animation: blink .7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white p-10" style="position: relative; min-height: 100vh; margin: 0;">
+    <div id="terminal" class="text-s">
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const commands = [
+            'Hi! :)',
+            'I am Priyasha. I am a Software Developer with 2+ years of experience.',
+            'I have predominantly worked on designing & building data ingestion pipelines and scalable backend applications in microservices architecture.',
+            '',
+            'TL;DR',
+            ' >> Name        :   Priyasha',
+            ' >> Experience  :   2+ years',
+            ' >> Skills      :   Java, Spring Boot, TDD, REST, SQL, NoSQL, Apache Kafka, CI/CD, Jenkins, BDD, Gherkins, GIT, Mockito, PowerMockito, LAMP, Kubernetes',
+            '',
+            'Click on the following buttons to know more: ',
+            ''
+        ];
+        let commandIndex = 0;
+        let commandText = '';
+        let textIndex = 0;
+
+        // Function to simulate typing a command
+        function typeCommand() {
+            if (commandIndex < commands.length) {
+                commandText = commands[commandIndex];
+                const newLine = document.createElement('div');
+                newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
+                terminal.appendChild(newLine);
+                const commandLine = document.createElement('span');
+                newLine.appendChild(commandLine);
+                typeText(commandLine, commandText);
+                commandIndex++;
+            } else if(commandIndex == commands.length) {
+                displayButtons();
+                commandIndex++;
+            }
+        }
+
+        // Function to simulate typing text
+        function typeText(element, text) {
+            if (textIndex < text.length) {
+                element.textContent += text.charAt(textIndex);
+                textIndex++;
+                setTimeout(() => typeText(element, text), 10); // Adjust typing speed (milliseconds)
+            } else {
+                textIndex = 0;
+                setTimeout(typeCommand, 500); // Delay before starting the next command (2 seconds)
+            }
+        }
+
+        const skillsCommands = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SKILLS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            'Languages  :     JAVA, Python, C, SQL, Gherkins, JSLT, XML',
+            'Frameworks :     Spring Boot, LAMP, CI/CD, Android, Cucumber, JUnit, TDD, BDD, Mockito, PowerMockito',
+            'Databases  :     Azure SQL, Elastic Search, MongoDB, Azure Storage',
+            'Tools      :     GIT, Apache Kafka, Jenkins, Sonar, Swagger, Kubernetes, Android Studio, Kibana',
+            ''
+        ];
+
+        const educationCommands = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EDUCATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            'B.Tech. Computer Science & Engineering',
+            '   >>  Indira Gandhi Delhi Technical University for Women (IGDTUW), Delhi',
+            '   >>  CPI: 84.69%',
+            '',
+            '10+2',
+            '   >>  LRS DAV Sr Sec Model School, Abohar (Punjab)',
+            '   >>  Percentage: 91.60%',
+            ''
+        ];
+
+        const experienceCommands = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EXPERIENCE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            'Walmart Global Tech Services (India) Pvt. Ltd.',
+            '   >>  Bangalore',
+            '       >>  Software Development Engineer III   (August, 2023 - present)',
+            '       >>  Software Development Engineer II    (July, 2021 - July, 2023)',
+            '',
+            'American Express (India) Pvt. Ltd. ',
+            '   >>  Remote',
+            '       >>  Technology Intern                   (May, 2020 - July, 2020)',
+            '',
+            '---- More information in resume ----',
+            ''
+        ];
+
+        const projectsCommands = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PROJECTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            ' >> Chatbot for last mile delivery team',
+            '       -- used Walmart\'s homegrown bot-builder',
+            '       -- integrates with micro-services to fetch real-time item delivery data',
+            '       -- provides quick resolution for last-mile delivery issues',
+            '       -- helps delivery support team with high volume of calls',
+            '',
+            ' >> Gamifying shopping experience of Walmart web users',
+            '       -- designed & built backend for gaming campaigns',
+            '       -- implemented authentication flows for web users',
+            '       -- helps in increasing organic traffic',
+            ''
+        ];
+
+        const contactCommands = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTACT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            ' >> email    :    priyashasetia99@gmail.com',
+            '    >> linkedIn :    https://www.linkedin.com/in/priyashasetia/',
+            '       >> github   :    https://github.com/priyasha99',
+            '          >> leetcode :    https://leetcode.com/prs99/',
+            ''
+        ];
+
+        let sectionCommandText = '';
+        let sectionTextIndex = 0;
+
+        // Function to type section commands
+        function typeSectionCommands(sectionCommands) {
+            let sectionCommandIndex = 0;
+
+            function typeNextSectionCommand() {
+                if (sectionCommandIndex < sectionCommands.length) {
+                    sectionCommandText = sectionCommands[sectionCommandIndex];
+                    const newLine = document.createElement('div');
+                    newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
+                    terminal.appendChild(newLine);
+                    const commandLine = document.createElement('span');
+                    newLine.appendChild(commandLine);
+                    typeSectionText(commandLine, sectionCommandText);
+                    sectionCommandIndex++;
+                }
+            }
+
+            typeNextSectionCommand(); // Start typing the first command
+
+            // Type the next section command after a delay
+            function typeSectionText(element, text) {
+                if (sectionTextIndex < text.length) {
+                    element.textContent += text.charAt(sectionTextIndex);
+                    sectionTextIndex++;
+                    setTimeout(() => typeSectionText(element, text), 10); // Adjust typing speed (milliseconds)
+                } else {
+                    sectionTextIndex = 0;
+                    setTimeout(typeNextSectionCommand, 500); // Delay before starting the next section command (2 seconds)
+                }
+            }
+        }
+
+
+
+
+        // Function to display center-aligned buttons
+        function displayButtons() {
+            const buttonContainer = document.createElement('div');
+            buttonContainer.classList.add('text-center', 'mt-4');
+            buttonContainer.style.marginBottom = '20px'; // Add margin to create space
+
+            const button1 = document.createElement('button');
+            button1.id = 'button1';
+            button1.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2');
+            button1.textContent = 'Skills';
+
+            const button2 = document.createElement('button');
+            button2.id = 'button2';
+            button2.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2');
+            button2.textContent = 'Education';
+
+            const button3 = document.createElement('button');
+            button3.id = 'button3';
+            button3.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2');
+            button3.textContent = 'Experience';
+
+            const button4 = document.createElement('button');
+            button4.id = 'button4';
+            button4.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2');
+            button4.textContent = 'Projects';
+
+            const button5 = document.createElement('button');
+            button5.id = 'button5';
+            button5.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2');
+            button5.textContent = 'Contact';
+
+            const button6 = document.createElement('button');
+            button6.id = 'button6';
+            button6.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded');
+            button6.textContent = 'Resume';
+
+            buttonContainer.appendChild(button1);
+            buttonContainer.appendChild(button2);
+            buttonContainer.appendChild(button3);
+            buttonContainer.appendChild(button4);
+            buttonContainer.appendChild(button5);
+            buttonContainer.appendChild(button6);
+
+            terminal.appendChild(buttonContainer);
+
+            // Event listener for Button 1
+            button1.addEventListener('click', () => {
+                typeSectionCommands(skillsCommands);
+            });
+
+            // Event listener for Button 2
+            button2.addEventListener('click', () => {
+                typeSectionCommands(educationCommands);
+            });
+
+            // Event listener for Button 3
+            button3.addEventListener('click', () => {
+                typeSectionCommands(experienceCommands);
+            });
+
+            // Event listener for Button 4
+            button4.addEventListener('click', () => {
+                typeSectionCommands(projectsCommands);
+            });
+
+            // Event listener for Button 5
+            button5.addEventListener('click', () => {
+                typeSectionCommands(contactCommands);
+            });
+
+            // Event listener for Resume button
+            button6.addEventListener('click', () => {
+                // Redirect the user to the specified link
+                window.location.href = 'https://drive.google.com/file/d/1mpQg6a_e0rvhq3y9ZAOT3u04F4hAlxmG/view';
+            });
+        }
+
+        // Start typing the initial command
+        typeCommand();
+    </script>
+
+    <!-- Padding for the bottom of the body content -->
+    <div style="padding-bottom: 60px;"></div>
+
+    <!-- Footer with fixed position -->
+    <div class="bg-gray-900 text-center py-4" style="position: fixed; bottom: 0; width: 95%;">
+        <p class="text-sm">&copy; 2023 Priyasha Setia. All rights reserved.</p>
+    </div>
+
+</body>
+</html>
