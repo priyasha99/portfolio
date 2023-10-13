@@ -1,7 +1,7 @@
 # Priyasha - Personal Portfolio Website
 
 ## Website
-URL : https://priyashasetia.com
+URL : https://www.priyashasetia.com
 
 #### Tech Stack
 - HTML
