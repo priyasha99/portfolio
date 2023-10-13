@@ -144,38 +144,76 @@
 
         let sectionCommandText = '';
         let sectionTextIndex = 0;
+        let isTypingSectionCommands = false;
 
         // Function to type section commands
         function typeSectionCommands(sectionCommands) {
-            let sectionCommandIndex = 0;
+            if (!isTypingSectionCommands) {
+                isTypingSectionCommands = true;
+                let sectionCommandIndex = 0;
 
-            function typeNextSectionCommand() {
-                if (sectionCommandIndex < sectionCommands.length) {
-                    sectionCommandText = sectionCommands[sectionCommandIndex];
-                    const newLine = document.createElement('div');
-                    newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
-                    terminal.appendChild(newLine);
-                    const commandLine = document.createElement('span');
-                    newLine.appendChild(commandLine);
-                    typeSectionText(commandLine, sectionCommandText);
-                    sectionCommandIndex++;
+                function typeNextSectionCommand() {
+                    if (sectionCommandIndex < sectionCommands.length) {
+                        sectionCommandText = sectionCommands[sectionCommandIndex];
+                        const newLine = document.createElement('div');
+                        newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
+                        terminal.appendChild(newLine);
+                        const commandLine = document.createElement('span');
+                        newLine.appendChild(commandLine);
+                        typeSectionText(commandLine, sectionCommandText);
+                        sectionCommandIndex++;
+                    } else {
+                        isTypingSectionCommands = false; // Enable buttons once all section commands are typed
+                    }
                 }
-            }
 
-            typeNextSectionCommand(); // Start typing the first command
+                typeNextSectionCommand(); // Start typing the first command
 
-            // Type the next section command after a delay
-            function typeSectionText(element, text) {
-                if (sectionTextIndex < text.length) {
-                    element.textContent += text.charAt(sectionTextIndex);
-                    sectionTextIndex++;
-                    setTimeout(() => typeSectionText(element, text), 10); // Adjust typing speed (milliseconds)
-                } else {
-                    sectionTextIndex = 0;
-                    setTimeout(typeNextSectionCommand, 500); // Delay before starting the next section command (2 seconds)
+                // Type the next section command after a delay
+                function typeSectionText(element, text) {
+                    if (sectionTextIndex < text.length) {
+                        element.textContent += text.charAt(sectionTextIndex);
+                        sectionTextIndex++;
+                        setTimeout(() => typeSectionText(element, text), 10); // Adjust typing speed (milliseconds)
+                    } else {
+                        sectionTextIndex = 0;
+                        setTimeout(typeNextSectionCommand, 500); // Delay before starting the next section command (2 seconds)
+                    }
                 }
             }
         }
+
+        // // Function to type section commands
+        // function typeSectionCommands(sectionCommands) {
+        //     let sectionCommandIndex = 0;
+
+        //     function typeNextSectionCommand() {
+        //         if (sectionCommandIndex < sectionCommands.length) {
+        //             sectionCommandText = sectionCommands[sectionCommandIndex];
+        //             const newLine = document.createElement('div');
+        //             newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
+        //             terminal.appendChild(newLine);
+        //             const commandLine = document.createElement('span');
+        //             newLine.appendChild(commandLine);
+        //             typeSectionText(commandLine, sectionCommandText);
+        //             sectionCommandIndex++;
+        //         }
+        //     }
+
+        //     typeNextSectionCommand(); // Start typing the first command
+
+        //     // Type the next section command after a delay
+        //     function typeSectionText(element, text) {
+        //         if (sectionTextIndex < text.length) {
+        //             element.textContent += text.charAt(sectionTextIndex);
+        //             sectionTextIndex++;
+        //             setTimeout(() => typeSectionText(element, text), 10); // Adjust typing speed (milliseconds)
+        //         } else {
+        //             sectionTextIndex = 0;
+        //             setTimeout(typeNextSectionCommand, 500); // Delay before starting the next section command (2 seconds)
+        //         }
+        //     }
+        // }
 
 
 
