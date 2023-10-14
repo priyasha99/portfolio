@@ -35,7 +35,23 @@
 
     <script>
         const terminal = document.getElementById('terminal');
-        const commands = [
+        const introCommands = [
+            'Hi! :)',
+            'I am Priyasha. I am a Software Developer with 2+ years of experience.',
+            'I have predominantly worked on designing & building data ingestion pipelines and scalable backend applications in microservices architecture.',
+            '',
+            'TL;DR',
+            ' >> Name        :\nPriyasha',
+            ' >> Profession  :\nSoftware Development Engineer',
+            ' >> Expertise   :\nBackend Springboot microservices',
+            ' >> Experience  :\n2+ years',
+            ' >> Skills      :\nJava, Spring Boot, TDD, REST, SQL, NoSQL, Apache Kafka, CI/CD, Jenkins, BDD, Gherkins, GIT, Mockito, PowerMockito, LAMP, Kubernetes',
+            '',
+            'Click on the following buttons to know more: ',
+            ''
+        ];
+
+        const introCommandsForWeb = [
             'Hi! :)',
             'I am Priyasha. I am a Software Developer with 2+ years of experience.',
             'I have predominantly worked on designing & building data ingestion pipelines and scalable backend applications in microservices architecture.',
@@ -56,8 +72,8 @@
 
         // Function to simulate typing a command
         function typeCommand() {
-            if (commandIndex < commands.length) {
-                commandText = commands[commandIndex];
+            if (commandIndex < (window.innerWidth <= 768 ? introCommands.length : introCommandsForWeb.length)) {
+                commandText = window.innerWidth <= 768 ? introCommands[commandIndex] : introCommandsForWeb[commandIndex];
                 const newLine = document.createElement('div');
                 newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
                 terminal.appendChild(newLine);
@@ -65,7 +81,7 @@
                 newLine.appendChild(commandLine);
                 typeText(commandLine, commandText);
                 commandIndex++;
-            } else if(commandIndex == commands.length) {
+            } else if (commandIndex === (window.innerWidth <= 768 ? introCommands.length : introCommandsForWeb.length)) {
                 displayButtons();
             }
         }
@@ -117,7 +133,7 @@
             '10+2',
             '   >>  LRS DAV Sr Sec Model School, Abohar (Punjab)',
             '   >>  Year: 2017',
-            '   >>  Perc: 91.60%',
+            '   >>  Percentage: 91.60%',
             ''
         ];
 
@@ -168,17 +184,17 @@
 
         const contactCommands = [
             '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n CONTACT \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            ' >> email    :    priyashasetia99@gmail.com',
-            ' >> linkedIn :    https://www.linkedin.com/in/priyashasetia/',
-            ' >> github   :    https://github.com/priyasha99',
-            ' >> leetcode :    https://leetcode.com/prs99/',
+            ' >> email    :\npriyashasetia99@gmail.com',
+            ' >> linkedIn :\nhttps://linkedin.com/in/priyashasetia/',
+            ' >> github   :\nhttps://github.com/priyasha99',
+            ' >> leetcode :\nhttps://leetcode.com/prs99/',
             ''
         ];
 
         const contactCommandsForWeb = [
             '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTACT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
             ' >> email    :    priyashasetia99@gmail.com',
-            '    >> linkedIn :    https://www.linkedin.com/in/priyashasetia/',
+            '    >> linkedIn :    https://linkedin.com/in/priyashasetia/',
             '       >> github   :    https://github.com/priyasha99',
             '          >> leetcode :    https://leetcode.com/prs99/',
             ''
