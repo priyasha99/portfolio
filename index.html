@@ -83,6 +83,15 @@
         }
 
         const skillsCommands = [
+            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \nSKILLS \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            'Languages  :\nJAVA, Python, C, SQL, Gherkins, JSLT, XML',
+            'Frameworks :\nSpring Boot, LAMP, CI/CD, Android, Cucumber, JUnit, TDD, BDD, Mockito, PowerMockito',
+            'Databases  :\nAzure SQL, Elastic Search, MongoDB, Azure Storage',
+            'Tools      :\nGIT, Apache Kafka, Jenkins, Sonar, Swagger, Kubernetes, Android Studio, Kibana',
+            ''
+        ];
+
+        const skillsCommandsForWeb = [
             '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SKILLS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
             'Languages  :     JAVA, Python, C, SQL, Gherkins, JSLT, XML',
             'Frameworks :     Spring Boot, LAMP, CI/CD, Android, Cucumber, JUnit, TDD, BDD, Mockito, PowerMockito',
@@ -92,7 +101,7 @@
         ];
 
         const educationCommands = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EDUCATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \nEDUCATION \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
             '\n >> B.Tech. Computer Science & Engineering \n  --  Indira Gandhi Delhi Technical University for Women (IGDTUW), Delhi \n  --  Year: 2021 \n  --  CPI: 84.69%',
             '\n >> 10+2 \n  --  LRS DAV Sr Sec Model School, Abohar (Punjab) \n  --  Year: 2017 \n  --  Percentage: 91.60%',
             ''
@@ -113,10 +122,10 @@
         ];
 
         const experienceCommands = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EXPERIENCE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \nEXPERIENCE \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
             '\n >>>> Walmart Global Tech Services \n ---->  Bangalore \n --  Software Development Engineer III   (August, 2023 - present) \n --  Software Development Engineer II    (July, 2021 - July, 2023)',
             '\n >>>> American Express \n ---->  Remote \n --  Technology Intern                   (May, 2020 - July, 2020)',
-            '\n *** More information in resume ***',
+            '\n *** \n More information in resume \n ***',
             ''
         ];
 
@@ -136,7 +145,7 @@
         ];
 
         const projectsCommands = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PROJECTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n PROJECTS \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
             ' \n >> Chatbot for last mile delivery team \n -- used Walmart\'s homegrown bot-builder \n -- integrates with micro-services to fetch real-time item delivery data \n -- provides quick resolution for last-mile delivery issues \n -- helps delivery support team with high volume of calls',
             ' \n >> Gamifying shopping experience of Walmart web users \n -- designed & built backend for gaming campaigns \n -- implemented authentication flows for web users \n -- helps in increasing organic traffic',
             ''
@@ -158,7 +167,7 @@
         ];
 
         const contactCommands = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTACT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n CONTACT \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
             ' >> email    :    priyashasetia99@gmail.com',
             ' >> linkedIn :    https://www.linkedin.com/in/priyashasetia/',
             ' >> github   :    https://github.com/priyasha99',
@@ -263,7 +272,11 @@
 
             // Event listener for Button 1
             button1.addEventListener('click', () => {
-                typeSectionCommands(skillsCommands);
+                if (window.innerWidth <= 768) {
+                    typeSectionCommands(skillsCommands);
+                } else {
+                    typeSectionCommands(skillsCommandsForWeb);
+                }
             });
 
             // Event listener for Button 2
