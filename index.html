@@ -98,11 +98,40 @@
             ''
         ];
 
+        const educationCommandsForWeb = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EDUCATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            'B.Tech. Computer Science & Engineering',
+            '   >>  Indira Gandhi Delhi Technical University for Women (IGDTUW), Delhi',
+            '   >>  Year: 2021',
+            '   >>  CPI: 84.69%',
+            '',
+            '10+2',
+            '   >>  LRS DAV Sr Sec Model School, Abohar (Punjab)',
+            '   >>  Year: 2017',
+            '   >>  Perc: 91.60%',
+            ''
+        ];
+
         const experienceCommands = [
             '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EXPERIENCE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
             '\n >>>> Walmart Global Tech Services \n ---->  Bangalore \n --  Software Development Engineer III   (August, 2023 - present) \n --  Software Development Engineer II    (July, 2021 - July, 2023)',
             '\n >>>> American Express \n ---->  Remote \n --  Technology Intern                   (May, 2020 - July, 2020)',
-            '\n ---- More information in resume ----',
+            '\n *** More information in resume ***',
+            ''
+        ];
+
+        const experienceCommandsForWeb = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EXPERIENCE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            'Walmart Global Tech Services (India) Pvt. Ltd.',
+            '   >>  Bangalore',
+            '       --  Software Development Engineer III   (August, 2023 - present)',
+            '       --  Software Development Engineer II    (July, 2021 - July, 2023)',
+            '',
+            'American Express (India) Pvt. Ltd. ',
+            '   >>  Remote',
+            '       --  Technology Intern                   (May, 2020 - July, 2020)',
+            '',
+            '---- More information in resume ----',
             ''
         ];
 
@@ -113,12 +142,36 @@
             ''
         ];
 
+        const projectsCommandsForWeb = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PROJECTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            ' >> Chatbot for last mile delivery team',
+            '       -- used Walmart\'s homegrown bot-builder',
+            '       -- integrates with micro-services to fetch real-time item delivery data',
+            '       -- provides quick resolution for last-mile delivery issues',
+            '       -- helps delivery support team with high volume of calls',
+            '',
+            ' >> Gamifying shopping experience of Walmart web users',
+            '       -- designed & built backend for gaming campaigns',
+            '       -- implemented authentication flows for web users',
+            '       -- helps in increasing organic traffic',
+            ''
+        ];
+
         const contactCommands = [
             '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTACT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
             ' >> email    :    priyashasetia99@gmail.com',
             ' >> linkedIn :    https://www.linkedin.com/in/priyashasetia/',
             ' >> github   :    https://github.com/priyasha99',
             ' >> leetcode :    https://leetcode.com/prs99/',
+            ''
+        ];
+
+        const contactCommandsForWeb = [
+            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTACT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
+            ' >> email    :    priyashasetia99@gmail.com',
+            '    >> linkedIn :    https://www.linkedin.com/in/priyashasetia/',
+            '       >> github   :    https://github.com/priyasha99',
+            '          >> leetcode :    https://leetcode.com/prs99/',
             ''
         ];
 
@@ -162,41 +215,6 @@
                 }
             }
         }
-
-        // // Function to type section commands
-        // function typeSectionCommands(sectionCommands) {
-        //     let sectionCommandIndex = 0;
-
-        //     function typeNextSectionCommand() {
-        //         if (sectionCommandIndex < sectionCommands.length) {
-        //             sectionCommandText = sectionCommands[sectionCommandIndex];
-        //             const newLine = document.createElement('div');
-        //             newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
-        //             terminal.appendChild(newLine);
-        //             const commandLine = document.createElement('span');
-        //             newLine.appendChild(commandLine);
-        //             typeSectionText(commandLine, sectionCommandText);
-        //             sectionCommandIndex++;
-        //         }
-        //     }
-
-        //     typeNextSectionCommand(); // Start typing the first command
-
-        //     // Type the next section command after a delay
-        //     function typeSectionText(element, text) {
-        //         if (sectionTextIndex < text.length) {
-        //             element.textContent += text.charAt(sectionTextIndex);
-        //             sectionTextIndex++;
-        //             setTimeout(() => typeSectionText(element, text), 10); // Adjust typing speed (milliseconds)
-        //         } else {
-        //             sectionTextIndex = 0;
-        //             setTimeout(typeNextSectionCommand, 500); // Delay before starting the next section command (2 seconds)
-        //         }
-        //     }
-        // }
-
-
-
 
         // Function to display center-aligned buttons
         function displayButtons() {
@@ -250,22 +268,38 @@
 
             // Event listener for Button 2
             button2.addEventListener('click', () => {
-                typeSectionCommands(educationCommands);
+                if (window.innerWidth <= 768) {
+                    typeSectionCommands(educationCommands);
+                } else {
+                    typeSectionCommands(educationCommandsForWeb);
+                }
             });
 
             // Event listener for Button 3
             button3.addEventListener('click', () => {
-                typeSectionCommands(experienceCommands);
+                if (window.innerWidth <= 768) {
+                    typeSectionCommands(experienceCommands);
+                } else {
+                    typeSectionCommands(experienceCommandsForWeb);
+                }
             });
 
             // Event listener for Button 4
             button4.addEventListener('click', () => {
-                typeSectionCommands(projectsCommands);
+                if (window.innerWidth <= 768) {
+                    typeSectionCommands(projectsCommands);
+                } else {
+                    typeSectionCommands(projectsCommandsForWeb);
+                }
             });
 
             // Event listener for Button 5
             button5.addEventListener('click', () => {
-                typeSectionCommands(contactCommands);
+                if (window.innerWidth <= 768) {
+                    typeSectionCommands(contactCommands);
+                } else {
+                    typeSectionCommands(contactCommandsForWeb);
+                }
             });
 
             // Event listener for Resume button
