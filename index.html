@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="booting">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,6 +58,14 @@
         }
 
         html { scroll-behavior: smooth; }
+
+        /* No page scroll while boot screen runs (content below is still in DOM) */
+        html.booting,
+        html.booting body {
+            overflow: hidden;
+            height: 100%;
+            overscroll-behavior: none;
+        }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
@@ -1377,6 +1385,7 @@
                 // After collapse animation finishes, remove and slide to diagram
                 setTimeout(() => {
                     bootScreen.remove();
+                    document.documentElement.classList.remove('booting');
                     document.documentElement.style.scrollBehavior = '';
 
                     // Smooth scroll to diagram container
