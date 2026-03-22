@@ -3,352 +3,1833 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Priyasha Setia</title>
-    <link rel = "icon" href =  "logo.jpg" type = "image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Priyasha Setia — Backend Engineer</title>
+    <link rel="icon" href="logo.jpg" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Virgil:wght@400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        #terminal {
-            font-family: 'Courier New', monospace;
-            white-space: pre-wrap; /* This property wraps text and respects line breaks */
-            max-width: 100%; /* Ensure it does not exceed the device's horizontal proportions */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #f8f9fa;
+            --dot: #d1d5db;
+            --node-bg: #ffffff;
+            --node-border: #374151;
+            --node-shadow: rgba(0,0,0,0.08);
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --line-color: #9ca3af;
+            --hand-font: 'Segoe Print', 'Comic Sans MS', 'Virgil', cursive;
+            --health-bg: #1f2937;
+            --health-text: #a5f3fc;
+            --exp-entry-bg: #fafbfc;
+            --exp-entry-border: #e5e7eb;
+            --exp-hover-bg: #f0f4ff;
+            --skill-tag-bg: white;
+            --status-pill-bg: #f3f4f6;
+            --gateway-border: #e5e7eb;
+            --gateway-hover-bg: #faf5ff;
+            --award-border: #e5e7eb;
+        }
+        [data-theme="dark"] {
+            --bg: #0f1117;
+            --dot: #1e2433;
+            --node-bg: #181c27;
+            --node-border: #2d3548;
+            --node-shadow: rgba(0,0,0,0.3);
+            --text-primary: #e2e8f0;
+            --text-secondary: #8892a8;
+            --line-color: #3d4760;
+            --health-bg: #0d1117;
+            --health-text: #7dd3fc;
+            --exp-entry-bg: #1a1f2e;
+            --exp-entry-border: #2d3548;
+            --exp-hover-bg: #1e2740;
+            --skill-tag-bg: #181c27;
+            --status-pill-bg: #1a1f2e;
+            --gateway-border: #2d3548;
+            --gateway-hover-bg: #1e1a2e;
+            --award-border: #2d3548;
         }
 
-        #terminal .pointer {
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Dot grid background */
+        .dot-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+        }
+
+        /* Canvas layer */
+        #connectionCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Main container */
+        .diagram-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px 80px;
+            min-height: 100vh;
+        }
+
+        /* ===== NODE BASE ===== */
+        .node {
+            position: relative;
+            background: var(--node-bg);
+            border: 2px solid var(--node-border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            cursor: grab;
+            user-select: none;
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+            box-shadow: 3px 3px 0 var(--node-border);
+        }
+        .node:hover {
+            box-shadow: 5px 5px 0 var(--node-border);
+            transform: translate(-1px, -1px);
+        }
+        .node.dragging {
+            cursor: grabbing;
+            box-shadow: 10px 10px 0 var(--node-border);
+            transform: translate(-3px, -3px) rotate(0.5deg);
+            z-index: 100;
+            opacity: 0.92;
+        }
+
+        /* drag handle — appears on hover */
+        .drag-handle {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .drag-handle span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            display: block;
+        }
+        .node:hover .drag-handle {
+            opacity: 0.5;
+        }
+        .node.dragging .drag-handle {
+            opacity: 0.8;
+        }
+
+        /* drag toast hint */
+        .drag-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            background: var(--text-primary);
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 10px 20px;
+            border-radius: 999px;
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .drag-toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-6px);
+        }
+        .drag-toast.hiding {
+            opacity: 0;
+            transform: translateX(-50%) translateY(4px);
+        }
+        .node-label {
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg);
+            padding: 0 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* ===== LAYOUT GRID ===== */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr 1fr;
+            grid-template-rows: auto auto auto auto;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* ===== CENTRAL NODE ===== */
+        .node-main {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            border-color: var(--accent-blue);
+            border-width: 3px;
+            box-shadow: 4px 4px 0 var(--accent-blue);
+            text-align: center;
+            padding: 28px 32px;
+        }
+        .node-main:hover {
+            box-shadow: 6px 6px 0 var(--accent-blue);
+        }
+        .node-main .node-label {
+            color: var(--accent-blue);
+        }
+        .main-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+        .main-role {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            color: var(--accent-blue);
+            margin-bottom: 16px;
+        }
+        .status-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--status-pill-bg);
+            padding: 4px 12px;
+            border-radius: 999px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.green { background: var(--accent-green); }
+        .status-dot.blue { background: var(--accent-blue); }
+        .status-dot.amber { background: var(--accent-amber); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.85); }
+        }
+
+        /* ===== SKILLS NODE ===== */
+        .node-skills {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        .skill-category {
+            margin-bottom: 14px;
+        }
+        .skill-category:last-child { margin-bottom: 0; }
+        .skill-category-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .skill-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 6px;
+            border: 1.5px solid;
+            background: var(--skill-tag-bg);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 2px 2px 0 currentColor;
+        }
+        .skill-tag.lang { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .skill-tag.infra { border-color: var(--accent-green); color: var(--accent-green); }
+        .skill-tag.tool { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+        /* ===== INFRASTRUCTURE NODE ===== */
+        .node-infra {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        /* ===== EXPERIENCE NODE ===== */
+        .node-experience {
+            grid-column: 1 / -1;
+            grid-row: 3;
+        }
+        .exp-timeline {
+            position: relative;
+            padding-left: 20px;
+        }
+        .exp-timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-green), var(--accent-amber));
+            border-radius: 2px;
+        }
+        .exp-entry {
+            position: relative;
+            margin-bottom: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            background: var(--exp-entry-bg);
+            border: 1px solid var(--exp-entry-border);
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .exp-entry:hover {
+            background: var(--exp-hover-bg);
+            border-color: var(--accent-blue);
+        }
+        .exp-entry:last-child { margin-bottom: 0; }
+        .exp-entry::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 22px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid;
+            background: var(--skill-tag-bg);
+        }
+        .exp-entry:nth-child(1)::before { border-color: var(--accent-blue); }
+        .exp-entry:nth-child(2)::before { border-color: var(--accent-green); }
+        .exp-entry:nth-child(3)::before { border-color: var(--accent-green); }
+        .exp-entry:nth-child(4)::before { border-color: var(--accent-amber); }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .exp-company {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .exp-role {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-blue);
+        }
+        .exp-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .exp-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .exp-entry.expanded .exp-details {
+            max-height: 400px;
+            opacity: 1;
+        }
+        .exp-detail-item {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .exp-detail-item::before {
+            content: '+';
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .exp-expand-hint {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            opacity: 0.6;
+        }
+
+        /* ===== METRICS NODE ===== */
+        .node-metrics {
+            grid-column: 2;
+            grid-row: 2;
+            border-color: var(--accent-green);
+            box-shadow: 3px 3px 0 var(--accent-green);
+        }
+        .node-metrics:hover {
+            box-shadow: 5px 5px 0 var(--accent-green);
+        }
+        .node-metrics .node-label { color: var(--accent-green); }
+        .metric-item {
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .metric-item:last-child { margin-bottom: 0; }
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* ===== AWARDS NODE ===== */
+        .node-awards {
+            grid-column: 1;
+            grid-row: 4;
+            border-color: var(--accent-amber);
+            box-shadow: 3px 3px 0 var(--accent-amber);
+        }
+        .node-awards:hover { box-shadow: 5px 5px 0 var(--accent-amber); }
+        .node-awards .node-label { color: var(--accent-amber); }
+        .award-item {
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--award-border);
+        }
+        .award-item:last-child { border-bottom: none; }
+        .award-name {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+        .award-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* ===== CONTACT / API GATEWAY NODE ===== */
+        .node-contact {
+            grid-column: 2;
+            grid-row: 4;
+            border-color: var(--accent-purple);
+            box-shadow: 3px 3px 0 var(--accent-purple);
+        }
+        .node-contact:hover { box-shadow: 5px 5px 0 var(--accent-purple); }
+        .node-contact .node-label { color: var(--accent-purple); }
+        .gateway-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .gateway-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--gateway-border);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        .gateway-item:hover {
+            border-color: var(--accent-purple);
+            background: var(--gateway-hover-bg);
+            transform: translateX(4px);
+        }
+        .gateway-method {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .method-get { background: var(--accent-blue); }
+        .method-post { background: var(--accent-green); }
+        .gateway-endpoint {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .gateway-item--resume {
+            border-color: var(--accent-blue) !important;
+            background: rgba(59, 130, 246, 0.08);
+        }
+        .gateway-item--resume:hover {
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        /* ===== STATUS / HEALTH NODE ===== */
+        .node-status {
+            grid-column: 3;
+            grid-row: 4;
+            border-color: var(--accent-cyan);
+            box-shadow: 3px 3px 0 var(--accent-cyan);
+        }
+        .node-status:hover { box-shadow: 5px 5px 0 var(--accent-cyan); }
+        .node-status .node-label { color: var(--accent-cyan); }
+        .health-response {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: var(--health-bg);
+            color: var(--health-text);
+            border-radius: 8px;
+            padding: 14px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        .health-response .key { color: #93c5fd; }
+        .health-response .string { color: #86efac; }
+        .health-response .number { color: #fcd34d; }
+        .health-response .bool { color: #f9a8d4; }
+
+        /* ===== EDUCATION NODE ===== */
+        .node-education {
+            grid-column: 1;
+            grid-row: 5;
+        }
+        .edu-detail {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .edu-degree {
+            font-weight: 600;
+        }
+        .edu-school {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* ===== GITHUB ACTIVITY NODE ===== */
+        .node-github {
+            grid-column: 2 / 4;
+            grid-row: 5;
+            border-color: var(--text-primary);
+        }
+        .github-events {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .github-event {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--award-border);
+        }
+        .github-event:last-child { border-bottom: none; }
+        .event-type {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .event-push { background: #dbeafe; color: var(--accent-blue); }
+        .event-pr { background: #d1fae5; color: var(--accent-green); }
+        .event-star { background: #fef3c7; color: var(--accent-amber); }
+        .event-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        /* ===== CONNECTION LINES (SVG) ===== */
+        .connections-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .conn-line {
+            fill: none;
+            stroke: var(--line-color);
+            stroke-width: 2;
+            stroke-dasharray: 6 4;
+            opacity: 0.5;
+        }
+        .conn-particle {
+            fill: var(--accent-blue);
+            opacity: 0.8;
+        }
+
+        /* ===== HAND-DRAWN ANNOTATIONS ===== */
+        .annotation {
+            position: absolute;
+            font-family: var(--hand-font);
+            font-size: 13px;
+            color: var(--text-secondary);
+            opacity: 0.5;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 3;
+        }
+
+        /* ===== FLOATING PARTICLES ===== */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+            }
+            .node-main { grid-column: 1 / 3; grid-row: 1; }
+            .node-skills { grid-column: 1; grid-row: 2; }
+            .node-infra { grid-column: 2; grid-row: 2; }
+            .node-experience { grid-column: 1 / 3; grid-row: 3; }
+            .node-metrics { grid-column: 1; grid-row: 4; }
+            .node-awards { grid-column: 2; grid-row: 4; }
+            .node-contact { grid-column: 1 / 3; grid-row: 5; }
+            .node-status { grid-column: 1; grid-row: 6; }
+            .node-education { grid-column: 2; grid-row: 6; }
+            .node-github { grid-column: 1 / 3; grid-row: 7; }
+            .annotation { display: none; }
+        }
+        @media (max-width: 640px) {
+            .layout {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .node-main,
+            .node-skills,
+            .node-infra,
+            .node-experience,
+            .node-metrics,
+            .node-awards,
+            .node-contact,
+            .node-status,
+            .node-education,
+            .node-github {
+                grid-column: 1;
+                grid-row: auto;
+            }
+            .diagram-container { padding: 8px 10px 80px; }
+            .node {
+                padding: 16px;
+                border-radius: 10px;
+                box-shadow: 2px 2px 0 var(--node-border);
+                /* Disable drag on mobile — it conflicts with scroll */
+                cursor: default;
+            }
+            .node:hover {
+                box-shadow: 2px 2px 0 var(--node-border);
+                transform: none;
+            }
+            .node-main {
+                padding: 24px 16px;
+                box-shadow: 3px 3px 0 var(--accent-blue);
+            }
+            .node-main:hover { box-shadow: 3px 3px 0 var(--accent-blue); transform: none; }
+            .main-name { font-size: 22px; }
+            .main-role { font-size: 13px; }
+            .status-indicators {
+                gap: 8px;
+                justify-content: center;
+            }
+            .status-pill { font-size: 11px; padding: 3px 10px; }
+            .skill-tag { font-size: 11px; padding: 2px 8px; }
+            .skill-category-name { font-size: 10px; }
+            .exp-header { flex-direction: column; gap: 4px; }
+            .exp-company { font-size: 14px; }
+            .exp-role { font-size: 11px; }
+            .exp-date { font-size: 10px; }
+            .exp-detail-item { font-size: 12px; }
+            .exp-expand-hint { font-size: 9px; }
+            .metric-value { font-size: 24px; }
+            .metric-label { font-size: 11px; }
+            .award-name { font-size: 12px; }
+            .award-desc { font-size: 11px; }
+            .gateway-item {
+                flex-wrap: wrap;
+                gap: 6px;
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            .gateway-endpoint { font-size: 11px; width: 100%; margin-left: 0; }
+            .gateway-method { font-size: 9px; }
+            .health-response { font-size: 10px; padding: 10px; }
+            .node-label { font-size: 10px; top: -9px; }
+            .zoom-controls { display: none; }
+            .github-event { flex-wrap: wrap; gap: 6px; font-size: 12px; }
+            .event-time { margin-left: 0; }
+            .node-metrics { box-shadow: 2px 2px 0 var(--accent-green); }
+            .node-metrics:hover { box-shadow: 2px 2px 0 var(--accent-green); transform: none; }
+            .node-awards { box-shadow: 2px 2px 0 var(--accent-amber); }
+            .node-awards:hover { box-shadow: 2px 2px 0 var(--accent-amber); transform: none; }
+            .node-contact { box-shadow: 2px 2px 0 var(--accent-purple); }
+            .node-contact:hover { box-shadow: 2px 2px 0 var(--accent-purple); transform: none; }
+            .node-status { box-shadow: 2px 2px 0 var(--accent-cyan); }
+            .node-status:hover { box-shadow: 2px 2px 0 var(--accent-cyan); transform: none; }
+            /* Reduce particles on mobile for performance */
+            #particleCanvas { opacity: 0.5; }
+        }
+        /* Small phones */
+        @media (max-width: 380px) {
+            .main-name { font-size: 19px; }
+            .status-indicators { flex-direction: column; align-items: center; }
+            .metric-value { font-size: 20px; }
+            .node { padding: 14px; }
+        }
+
+        /* ===== ZOOM CONTROLS ===== */
+        .zoom-controls {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 999;
+        }
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--node-border);
+            background: var(--node-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 2px 0 var(--node-border);
+            transition: all 0.15s;
+        }
+        .zoom-btn:hover {
+            box-shadow: 3px 3px 0 var(--node-border);
+            transform: translate(-0.5px, -0.5px);
+        }
+        .zoom-btn:active {
+            box-shadow: 1px 1px 0 var(--node-border);
+            transform: translate(0.5px, 0.5px);
+        }
+
+        /* ===== DARK MODE TOGGLE ===== */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 999;
+            background: var(--node-bg);
+            border: 2px solid var(--node-border);
+            border-radius: 999px;
+            width: 44px;
+            height: 24px;
+            cursor: pointer;
+            padding: 2px;
+            box-shadow: 2px 2px 0 var(--node-border);
+            transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .theme-toggle-knob {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-amber);
+            transition: transform 0.3s ease, background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            line-height: 1;
+        }
+        [data-theme="dark"] .theme-toggle-knob {
+            transform: translateX(20px);
+            background: var(--accent-blue);
+        }
+        @media (max-width: 640px) {
+            .theme-toggle { top: 12px; right: 12px; }
+        }
+
+        /* ===== NODE WIGGLE HINT ===== */
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0); }
+            15% { transform: rotate(-1.5deg) translate(-2px, 0); }
+            30% { transform: rotate(1.5deg) translate(2px, 0); }
+            45% { transform: rotate(-1deg) translate(-1px, 0); }
+            60% { transform: rotate(1deg) translate(1px, 0); }
+            75% { transform: rotate(-0.5deg); }
+        }
+        .node.wiggle {
+            animation: wiggle 0.6s ease-in-out 2;
+        }
+
+        /* ===== CURSOR TRAIL HINT ===== */
+        .cursor-hint {
+            position: absolute;
+            z-index: 200;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .cursor-hint.active { opacity: 1; }
+        .cursor-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-blue);
+            background: rgba(59,130,246,0.15);
+            position: absolute;
+            transition: transform 0.05s linear;
+        }
+        .cursor-ring {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            position: absolute;
+            left: 5px;
+            top: 5px;
+        }
+        .cursor-trail-line {
+            position: absolute;
+            height: 2px;
+            background: var(--accent-blue);
+            opacity: 0.3;
+            transform-origin: left center;
+            border-radius: 1px;
+        }
+        .cursor-label {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--accent-blue);
+            white-space: nowrap;
+            background: var(--bg);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-blue);
+            opacity: 0.8;
+        }
+
+        /* ===== SVG CONNECTION LINES ===== */
+        .connections-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: visible;
+        }
+        .conn-path {
+            fill: none;
+            stroke: var(--line-color);
+            stroke-width: 1.5;
+            stroke-dasharray: 6 4;
+            opacity: 0.4;
+            transition: stroke 0.3s;
+        }
+        .conn-dot {
+            fill: var(--accent-blue);
+            opacity: 0;
+        }
+        .conn-dot.flowing {
+            opacity: 0.7;
+        }
+
+        /* ===== SITE FOOTER ===== */
+        .site-footer {
+            text-align: center;
+            padding: 32px 24px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            letter-spacing: 0.03em;
+        }
+        .site-footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--line-color);
+            transition: color 0.2s;
+        }
+        .site-footer a:hover { color: var(--accent-blue); border-color: var(--accent-blue); }
+        .footer-divider {
             display: inline-block;
-            animation: blink .7s infinite;
+            margin: 0 8px;
+            opacity: 0.4;
+        }
+        .footer-claude {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .footer-claude-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        @keyframes blink {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0;
-            }
+        /* ===== BOOT SCREEN (in-flow, not fixed) ===== */
+        .boot-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg);
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            transition: min-height 0.6s ease, opacity 0.4s ease, padding 0.6s ease;
         }
-
+        .boot-screen.collapsing {
+            min-height: 0;
+            height: 0;
+            opacity: 0;
+            padding: 0;
+            pointer-events: none;
+        }
+        .boot-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 2;
+        }
+        .boot-text .done { color: var(--accent-green); }
+        .boot-bar {
+            width: 200px;
+            height: 4px;
+            background: var(--exp-entry-border);
+            border-radius: 4px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        .boot-bar-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-white p-10" style="position: relative; min-height: 100vh; margin: 0;">
-    <div id="terminal" class="text-s">
+<body>
+
+<!-- Boot screen — lives in normal document flow, not fixed -->
+<div class="boot-screen" id="bootScreen">
+    <div class="boot-text" id="bootText"></div>
+    <div class="boot-bar"><div class="boot-bar-fill" id="bootBarFill"></div></div>
+</div>
+
+<!-- Dark mode toggle -->
+<button class="theme-toggle" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">
+    <div class="theme-toggle-knob"><span id="themeIcon">☀</span></div>
+</button>
+
+<!-- Dot grid background -->
+<div class="dot-grid"></div>
+
+<!-- Floating particles canvas -->
+<canvas id="particleCanvas"></canvas>
+
+<!-- Main diagram -->
+<div class="diagram-container" id="diagramContainer">
+    <div class="layout" id="layoutGrid">
+        <!-- SVG connection lines between nodes -->
+        <svg class="connections-layer" id="connectionsLayer"></svg>
+
+        <!-- ===== CENTRAL SERVICE NODE ===== -->
+        <div class="node node-main" data-node="main">
+            <span class="node-label">// core.service</span>
+            <div class="main-name">Priyasha Setia</div>
+            <div class="main-role">Software Development Engineer</div>
+            <div class="status-indicators">
+                <div class="status-pill">
+                    <div class="status-dot green"></div>
+                    deployed
+                </div>
+                <div class="status-pill">
+                    <div class="status-dot blue"></div>
+                    5 yrs uptime
+                </div>
+                <div class="status-pill">
+                    <div class="status-dot amber"></div>
+                    Bangalore
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SKILLS / DEPENDENCIES NODE ===== -->
+        <div class="node node-skills" data-node="skills">
+            <span class="node-label">// dependencies</span>
+            <div class="skill-category">
+                <div class="skill-category-name">Languages</div>
+                <div class="skill-tags">
+                    <span class="skill-tag lang">Java</span>
+                    <span class="skill-tag lang">Python</span>
+                    <span class="skill-tag lang">JavaScript</span>
+                    <span class="skill-tag lang">SQL</span>
+                    <span class="skill-tag lang">NoSQL</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-category-name">Frameworks</div>
+                <div class="skill-tags">
+                    <span class="skill-tag infra">Spring Boot</span>
+                    <span class="skill-tag infra">Node.js</span>
+                    <span class="skill-tag infra">REST</span>
+                    <span class="skill-tag infra">TDD</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-category-name">AI & Tools</div>
+                <div class="skill-tags">
+                    <span class="skill-tag tool">Claude</span>
+                    <span class="skill-tag tool">Cursor</span>
+                    <span class="skill-tag tool">MCP</span>
+                    <span class="skill-tag tool">Copilot</span>
+                    <span class="skill-tag tool">RAG</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== INFRASTRUCTURE NODE ===== -->
+        <div class="node node-infra" data-node="infra">
+            <span class="node-label">// infrastructure</span>
+            <div class="skill-category">
+                <div class="skill-category-name">AWS</div>
+                <div class="skill-tags">
+                    <span class="skill-tag infra">DynamoDB</span>
+                    <span class="skill-tag infra">S3</span>
+                    <span class="skill-tag infra">Lambda</span>
+                    <span class="skill-tag infra">IAM</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-category-name">Platform</div>
+                <div class="skill-tags">
+                    <span class="skill-tag lang">Kubernetes</span>
+                    <span class="skill-tag lang">Kafka</span>
+                    <span class="skill-tag lang">CI/CD</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <div class="skill-category-name">Observability</div>
+                <div class="skill-tags">
+                    <span class="skill-tag tool">Splunk</span>
+                    <span class="skill-tag tool">Elastic Search</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== EXPERIENCE / EVENT LOG NODE ===== -->
+        <div class="node node-experience" data-node="experience">
+            <span class="node-label">// event.log</span>
+            <div class="exp-timeline">
+                <!-- Intuit -->
+                <div class="exp-entry" onclick="this.classList.toggle('expanded')">
+                    <div class="exp-header">
+                        <div>
+                            <span class="exp-company">Intuit</span>
+                            <span class="exp-role"> — Software Engineer II</span>
+                        </div>
+                        <span class="exp-date">Jun 2024 → present</span>
+                    </div>
+                    <div class="exp-expand-hint">click to expand ↓</div>
+                    <div class="exp-details">
+                        <div class="exp-detail-item">Spearheaded architectural shift from monolith to microservices for Custom Form Styles platform</div>
+                        <div class="exp-detail-item">Migrated 7M+ customers from PostgreSQL to DynamoDB with 100% data parity</div>
+                        <div class="exp-detail-item">System handles 1,200 TPS peak loads at 99.9% availability</div>
+                        <div class="exp-detail-item">Built RAG-based RTB automation suite with Jira Cloud &amp; Slack hooks</div>
+                        <div class="exp-detail-item">Conducted 30+ customer interviews for the MCI initiative</div>
+                    </div>
+                </div>
+                <!-- Walmart SDE III -->
+                <div class="exp-entry" onclick="this.classList.toggle('expanded')">
+                    <div class="exp-header">
+                        <div>
+                            <span class="exp-company">Walmart</span>
+                            <span class="exp-role"> — SDE III</span>
+                        </div>
+                        <span class="exp-date">Aug 2023 → Jun 2024</span>
+                    </div>
+                    <div class="exp-expand-hint">click to expand ↓</div>
+                    <div class="exp-details">
+                        <div class="exp-detail-item">Led modernization of Floor Plan Corrector app, removing 250+ high-rated vulnerabilities</div>
+                        <div class="exp-detail-item">Ensured full compliance with InfoSec guidelines and KTLO stability</div>
+                    </div>
+                </div>
+                <!-- Walmart SDE II -->
+                <div class="exp-entry" onclick="this.classList.toggle('expanded')">
+                    <div class="exp-header">
+                        <div>
+                            <span class="exp-company">Walmart</span>
+                            <span class="exp-role"> — SDE II</span>
+                        </div>
+                        <span class="exp-date">Jul 2021 → Jul 2023</span>
+                    </div>
+                    <div class="exp-expand-hint">click to expand ↓</div>
+                    <div class="exp-details">
+                        <div class="exp-detail-item" style="font-weight:600; color:var(--text-primary); margin-top:4px;">Assortment Strategy Planner — Automated assortment planning feeding pre-trained ML models</div>
+                        <div class="exp-detail-item">End-to-end data ingestion pipeline for 38,000+ floor plans across 4,500+ stores</div>
+                        <div class="exp-detail-item">Innovative features: closed node alerting, dynamic data refresh, caching &amp; real-time data cleansing — elevating data accuracy to 95%</div>
+                        <div class="exp-detail-item">Blueprint versioning for manual edits with efficient floor plan re-usability</div>
+                        <div class="exp-detail-item">$225K revenue savings from a single department</div>
+                        <div class="exp-detail-item" style="font-weight:600; color:var(--text-primary); margin-top:10px;">Space as a Service — Enterprise ETL platform for diverse space data</div>
+                        <div class="exp-detail-item">Led design &amp; development of 5 out of 6 critical components in end-to-end microservices architecture</div>
+                        <div class="exp-detail-item">99% reduction in processing time for datasets exceeding 2MB across Walmart's global supply chain</div>
+                        <div class="exp-detail-item" style="font-weight:600; color:var(--text-primary); margin-top:10px;">Adjacency &amp; Proximity Validations — ML input layer for product placements</div>
+                        <div class="exp-detail-item">Engineered space element relationship logic across 4,500+ stores and 70+ departments</div>
+                        <div class="exp-detail-item">Decisively amplified precision and efficacy of ML-generated floor plans</div>
+                    </div>
+                </div>
+                <!-- AmEx -->
+                <div class="exp-entry" onclick="this.classList.toggle('expanded')">
+                    <div class="exp-header">
+                        <div>
+                            <span class="exp-company">American Express</span>
+                            <span class="exp-role"> — Intern</span>
+                        </div>
+                        <span class="exp-date">May 2020 → Jul 2020</span>
+                    </div>
+                    <div class="exp-expand-hint">click to expand ↓</div>
+                    <div class="exp-details">
+                        <div class="exp-detail-item">Built Kafka Schema Registry with proper versioning and message identification</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== METRICS / MONITORING NODE ===== -->
+        <div class="node node-metrics" data-node="metrics">
+            <span class="node-label">// recent.metrics</span>
+            <div class="metric-item">
+                <div class="metric-value" data-count="7">0</div>
+                <div class="metric-label">Million customers migrated</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value" data-count="1200">0</div>
+                <div class="metric-label">TPS peak load handled</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-value">99.9<span style="font-size:18px">%</span></div>
+                <div class="metric-label">System availability</div>
+            </div>
+        </div>
+
+        <!-- ===== AWARDS NODE ===== -->
+        <div class="node node-awards" data-node="awards">
+            <span class="node-label">// achievements</span>
+            <div class="award-item">
+                <div class="award-name">⭐ Star of the Quarter — Q3 FY25</div>
+                <div class="award-desc">Intuit quarterly award — recognized for exceptional speed on platform modernization</div>
+            </div>
+            <div class="award-item">
+                <div class="award-name">🛡️ Bravo Award — Jan 2022</div>
+                <div class="award-desc">Walmart WGTS — prompt identification & resolution of critical Log4j2 vulnerability across 40+ Java repositories</div>
+            </div>
+            <div class="award-item">
+                <div class="award-name">⚡ Speedster Badge — Jul 2022</div>
+                <div class="award-desc">Walmart WGTS — rapidly addressed Spring vulnerability across 40 Java repositories</div>
+            </div>
+            <div class="award-item">
+                <div class="award-name">💡 Innovation Badge — Apr 2022</div>
+                <div class="award-desc">Walmart WGTS — inventive proposition for gamification of walmart.com at Innovation Jam 2022</div>
+            </div>
+            <div class="award-item">
+                <div class="award-name">🤝 Collaborator Badge — Jun 2022</div>
+                <div class="award-desc">Walmart WGTS — orchestrated pillar-wide events for cross-team collaboration across 50+ associates</div>
+            </div>
+            <div class="award-item">
+                <div class="award-name">🔥 Fire Fighter Badge — Dec 2021</div>
+                <div class="award-desc">Walmart WGTS — demonstrated resilience and composure during high-stakes production situations</div>
+            </div>
+        </div>
+
+        <!-- ===== CONTACT / API GATEWAY NODE ===== -->
+        <div class="node node-contact" data-node="contact">
+            <span class="node-label">// api.gateway</span>
+            <div class="gateway-list">
+                <a href="mailto:priyashasetia99@gmail.com" class="gateway-item">
+                    <span class="gateway-method method-post">POST</span>
+                    <span>/contact/email</span>
+                    <span class="gateway-endpoint">→ priyashasetia99@gmail.com</span>
+                </a>
+                <a href="https://linkedin.com/in/priyashasetia" target="_blank" class="gateway-item">
+                    <span class="gateway-method method-get">GET</span>
+                    <span>/social/linkedin</span>
+                    <span class="gateway-endpoint">→ in/priyashasetia</span>
+                </a>
+                <a href="https://github.com/priyasha99" target="_blank" class="gateway-item">
+                    <span class="gateway-method method-get">GET</span>
+                    <span>/social/github</span>
+                    <span class="gateway-endpoint">→ priyasha99</span>
+                </a>
+                <a href="https://leetcode.com/prs99/" target="_blank" class="gateway-item">
+                    <span class="gateway-method method-get">GET</span>
+                    <span>/social/leetcode</span>
+                    <span class="gateway-endpoint">→ prs99</span>
+                </a>
+                <a href="https://drive.google.com/file/d/1UmCkfOJDnIwcFVjnKS5jz06D_97XYIJ0/view?usp=drive_link" target="_blank" class="gateway-item gateway-item--resume">
+                    <span class="gateway-method method-get">GET</span>
+                    <span>/resume</span>
+                    <span class="gateway-endpoint">→ resume.pdf</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ===== STATUS / HEALTH CHECK NODE ===== -->
+        <div class="node node-status" data-node="status">
+            <span class="node-label">// health.check</span>
+            <div class="health-response">
+<span class="key">GET</span> /health <span class="string">200 OK</span>
+{
+  <span class="key">"status"</span>: <span class="string">"healthy"</span>,
+  <span class="key">"uptime"</span>: <span class="string">"<span id="uptimeValue">loading...</span>"</span>,
+  <span class="key">"version"</span>: <span class="string">"2.0.0"</span>,
+  <span class="key">"region"</span>: <span class="string">"ap-south-1"</span>,
+  <span class="key">"last_deploy"</span>: <span class="string">"2024-06-01"</span>,
+  <span class="key">"visitors"</span>: <span class="number" id="visitorCount">0</span>,
+  <span class="key">"current_time"</span>: <span class="string">"<span id="currentTime">...</span>"</span>
+}
+            </div>
+        </div>
+
+        <!-- ===== EDUCATION NODE ===== -->
+        <div class="node node-education" data-node="education">
+            <span class="node-label">// init.config</span>
+            <div class="edu-detail">
+                <div class="edu-degree">B.Tech — Computer Science & Engineering</div>
+                <div class="edu-school">Indira Gandhi Delhi Technical University for Women (IGDTUW)</div>
+                <div class="edu-school" style="margin-top:4px">Delhi · 2021 · CPI: 84.69%</div>
+            </div>
+        </div>
+
+        <!-- ===== GITHUB ACTIVITY NODE ===== -->
+        <div class="node node-github" data-node="github">
+            <span class="node-label">// recent.events</span>
+            <div class="github-events" id="githubEvents">
+                <div class="github-event">
+                    <span class="event-type event-push">PUSH</span>
+                    <span>feat: platform modernization — CFS microservices</span>
+                    <span class="event-time">recent</span>
+                </div>
+                <div class="github-event">
+                    <span class="event-type event-push">PUSH</span>
+                    <span>data-sync pipeline for DynamoDB migration</span>
+                    <span class="event-time">recent</span>
+                </div>
+                <div class="github-event">
+                    <span class="event-type event-push">PUSH</span>
+                    <span>RAG-based RTB automation suite</span>
+                    <span class="event-time">recent</span>
+                </div>
+                <div class="github-event">
+                    <span class="event-type event-star">STAR</span>
+                    <span>portfolio v2.0 — architecture diagram redesign</span>
+                    <span class="event-time">now</span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <script>
-        const terminal = document.getElementById('terminal');
-        const introCommands = [
-            'Hi! :)',
-            'I am Priyasha. I am a Software Developer with 2+ years of experience.',
-            'I have predominantly worked on designing & building data ingestion pipelines and scalable backend applications in microservices architecture.',
-            '',
-            'TL;DR',
-            ' >> Name        \n: Priyasha',
-            ' >> Profession  \n: Software Development Engineer',
-            ' >> Expertise   \n: Backend Springboot microservices',
-            ' >> Experience  \n: 2+ years',
-            ' >> Skills      \n: Java, Spring Boot, TDD, REST, SQL, NoSQL, Apache Kafka, CI/CD, Jenkins, BDD, Gherkins, GIT, Mockito, PowerMockito, LAMP, Kubernetes',
-            '',
-            'Click on the following buttons to know more: ',
-            ''
-        ];
+    <!-- Footer -->
+    <footer class="site-footer">
+        <span>© 2025 Priyasha Setia</span>
+        <span class="footer-divider">//</span>
+        <span class="footer-claude">
+            <span class="footer-claude-dot"></span>
+            co-built with <a href="https://claude.ai" target="_blank" rel="noopener">Claude</a>
+        </span>
+        <span class="footer-divider">//</span>
+        <a href="mailto:priyashasetia99@gmail.com">say hello</a>
+    </footer>
+</div>
 
-        const introCommandsForWeb = [
-            'Hi! :)',
-            'I am Priyasha. I am a Software Developer with 2+ years of experience.',
-            'I have predominantly worked on designing & building data ingestion pipelines and scalable backend applications in microservices architecture.',
-            '',
-            'TL;DR',
-            ' >> Name        :   Priyasha',
-            ' >> Profession  :   Software Development Engineer',
-            ' >> Expertise   :   Backend Springboot microservices',
-            ' >> Experience  :   2+ years',
-            ' >> Skills      :   Java, Spring Boot, TDD, REST, SQL, NoSQL, Apache Kafka, CI/CD, Jenkins, BDD, Gherkins, GIT, Mockito, PowerMockito, LAMP, Kubernetes',
-            '',
-            'Click on the following buttons to know more: ',
-            ''
-        ];
-        let commandIndex = 0;
-        let commandText = '';
-        let textIndex = 0;
+<!-- Zoom controls -->
+<div class="zoom-controls">
+    <button class="zoom-btn" id="zoomIn" title="Zoom In">+</button>
+    <button class="zoom-btn" id="zoomOut" title="Zoom Out">−</button>
+    <button class="zoom-btn" id="zoomReset" title="Reset" style="font-size:12px">⟳</button>
+</div>
 
-        // Function to simulate typing a command
-        function typeCommand() {
-            if (commandIndex < (window.innerWidth <= 768 ? introCommands.length : introCommandsForWeb.length)) {
-                commandText = window.innerWidth <= 768 ? introCommands[commandIndex] : introCommandsForWeb[commandIndex];
-                const newLine = document.createElement('div');
-                newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
-                terminal.appendChild(newLine);
-                const commandLine = document.createElement('span');
-                newLine.appendChild(commandLine);
-                typeText(commandLine, commandText);
-                commandIndex++;
-            } else if (commandIndex === (window.innerWidth <= 768 ? introCommands.length : introCommandsForWeb.length)) {
-                displayButtons();
+<!-- Cursor trail hint element -->
+<div class="cursor-hint" id="cursorHint">
+    <div class="cursor-dot"><div class="cursor-ring"></div></div>
+    <div class="cursor-label">drag to rearrange</div>
+</div>
+
+<script>
+// ===== BOOT SEQUENCE =====
+(function bootSequence() {
+    const lines = [
+        { text: 'Initializing system...', delay: 200 },
+        { text: 'Loading dependencies ✓', delay: 400 },
+        { text: 'Connecting services ✓', delay: 300 },
+        { text: 'Mounting event logs ✓', delay: 300 },
+        { text: 'Health check: 200 OK ✓', delay: 200 },
+        { text: 'System ready.', delay: 400 },
+    ];
+
+    const bootText = document.getElementById('bootText');
+    const bootBarFill = document.getElementById('bootBarFill');
+    const bootScreen = document.getElementById('bootScreen');
+    let current = 0;
+
+    function showLine() {
+        if (current < lines.length) {
+            const span = document.createElement('div');
+            span.textContent = lines[current].text;
+            if (lines[current].text.includes('✓') || lines[current].text.includes('ready')) {
+                span.classList.add('done');
+            }
+            bootText.appendChild(span);
+            bootBarFill.style.width = ((current + 1) / lines.length * 100) + '%';
+            current++;
+            setTimeout(showLine, lines[current - 1].delay);
+        } else {
+            // Boot done — collapse boot screen, then smoothly scroll diagram into view
+            setTimeout(() => {
+                // Lock page at top so collapse looks clean
+                document.documentElement.style.scrollBehavior = 'auto';
+                window.scrollTo(0, 0);
+
+                bootScreen.classList.add('collapsing');
+                startParticles();
+                animateMetrics();
+
+                // After collapse animation finishes, remove and slide to diagram
+                setTimeout(() => {
+                    bootScreen.remove();
+                    document.documentElement.style.scrollBehavior = '';
+
+                    // Smooth scroll to diagram container
+                    const diagram = document.getElementById('diagramContainer');
+                    if (diagram) {
+                        diagram.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+
+                    document.dispatchEvent(new Event('boot-complete'));
+                }, 650);
+            }, 500);
+        }
+    }
+    showLine();
+})();
+
+// ===== UPTIME & TIME =====
+(function liveUpdates() {
+    const deployDate = new Date('2024-06-01');
+    function update() {
+        const now = new Date();
+        const diff = now - deployDate;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const el = document.getElementById('uptimeValue');
+        if (el) el.textContent = days + 'd ' + hours + 'h';
+
+        const timeEl = document.getElementById('currentTime');
+        if (timeEl) timeEl.textContent = now.toISOString().slice(0, 19) + 'Z';
+    }
+    update();
+    setInterval(update, 1000);
+})();
+
+// ===== VISITOR COUNT =====
+(function visitorCounter() {
+    let count = Math.floor(Math.random() * 500) + 1200;
+    const el = document.getElementById('visitorCount');
+    if (el) el.textContent = count;
+    setInterval(() => {
+        if (Math.random() > 0.7) {
+            count++;
+            if (el) el.textContent = count;
+        }
+    }, 5000);
+})();
+
+// ===== METRIC COUNTING ANIMATION =====
+function animateMetrics() {
+    document.querySelectorAll('.metric-value[data-count]').forEach(el => {
+        const target = parseInt(el.dataset.count);
+        const duration = 1500;
+        const start = performance.now();
+        function tick(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(eased * target).toLocaleString();
+            if (progress < 1) requestAnimationFrame(tick);
+            else el.textContent = target.toLocaleString() + (target === 7 ? 'M+' : '');
+        }
+        requestAnimationFrame(tick);
+    });
+}
+
+// ===== DRAGGABLE NODES (desktop only) =====
+(function makeDraggable() {
+    if (window.innerWidth <= 640) return; // Skip drag on mobile
+    let dragNode = null, offsetX = 0, offsetY = 0;
+    const nodes = document.querySelectorAll('.node');
+
+    // Inject drag handle dots into every node
+    nodes.forEach(node => {
+        const handle = document.createElement('div');
+        handle.className = 'drag-handle';
+        handle.setAttribute('aria-hidden', 'true');
+        for (let i = 0; i < 6; i++) {
+            const dot = document.createElement('span');
+            handle.appendChild(dot);
+        }
+        node.appendChild(handle);
+    });
+
+    nodes.forEach(node => {
+        node.addEventListener('mousedown', e => {
+            if (e.target.tagName === 'A' || e.target.closest('a')) return;
+            dragNode = node;
+            const rect = node.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            node.classList.add('dragging');
+            node.style.position = 'relative';
+            e.preventDefault();
+        });
+    });
+
+    document.addEventListener('mousemove', e => {
+        if (!dragNode) return;
+        const rect = dragNode.getBoundingClientRect();
+        const dx = e.clientX - offsetX - rect.left;
+        const dy = e.clientY - offsetY - rect.top;
+        const currentLeft = parseFloat(dragNode.style.left) || 0;
+        const currentTop = parseFloat(dragNode.style.top) || 0;
+        dragNode.style.left = (currentLeft + dx) + 'px';
+        dragNode.style.top = (currentTop + dy) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (dragNode) {
+            dragNode.classList.remove('dragging');
+            dragNode = null;
+        }
+    });
+})();
+
+// ===== DRAG HINT TOAST =====
+document.addEventListener('boot-complete', function() {
+    if (window.innerWidth <= 640) return;
+    if (sessionStorage.getItem('dragHintSeen')) return;
+    sessionStorage.setItem('dragHintSeen', '1');
+
+    const toast = document.createElement('div');
+    toast.className = 'drag-toast';
+    toast.innerHTML = '⠿&nbsp;&nbsp;nodes are draggable — rearrange the diagram';
+    document.body.appendChild(toast);
+
+    // Slide up and fade in
+    setTimeout(() => toast.classList.add('visible'), 100);
+    // Slide down and fade out after 4s
+    setTimeout(() => {
+        toast.classList.remove('visible');
+        toast.classList.add('hiding');
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
+});
+
+// ===== ZOOM / PAN =====
+(function zoomControls() {
+    const container = document.getElementById('diagramContainer');
+    let scale = 1;
+
+    document.getElementById('zoomIn').addEventListener('click', () => {
+        scale = Math.min(scale + 0.1, 1.5);
+        container.style.transform = `scale(${scale})`;
+        container.style.transformOrigin = 'top center';
+    });
+    document.getElementById('zoomOut').addEventListener('click', () => {
+        scale = Math.max(scale - 0.1, 0.6);
+        container.style.transform = `scale(${scale})`;
+        container.style.transformOrigin = 'top center';
+    });
+    document.getElementById('zoomReset').addEventListener('click', () => {
+        scale = 1;
+        container.style.transform = `scale(1)`;
+        // Reset dragged nodes
+        document.querySelectorAll('.node').forEach(n => {
+            n.style.left = '0px';
+            n.style.top = '0px';
+        });
+    });
+})();
+
+// ===== FLOATING PARTICLES =====
+function startParticles() {
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const colors = ['#3b82f6', '#10b981', '#8b5cf6', '#06b6d4', '#f59e0b'];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Create particles (fewer on mobile for performance)
+    const particleCount = window.innerWidth <= 640 ? 15 : 40;
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            r: Math.random() * 2.5 + 1,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            alpha: Math.random() * 0.3 + 0.1
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw connections between nearby particles
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 150) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = `rgba(156, 163, 175, ${0.08 * (1 - dist / 150)})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
             }
         }
 
-        // Function to simulate typing text
-        function typeText(element, text) {
-            if (textIndex < text.length) {
-                element.textContent += text.charAt(textIndex);
-                textIndex++;
-                setTimeout(() => typeText(element, text), 10); // Adjust typing speed (milliseconds)
+        // Draw particles
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.alpha;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        });
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+// ===== KEYBOARD SHORTCUT =====
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        document.getElementById('zoomReset').click();
+    }
+});
+
+// ===== AUTO-EXPAND FIRST EXPERIENCE ON MOBILE =====
+if (window.innerWidth <= 640) {
+    const firstExp = document.querySelector('.exp-entry');
+    if (firstExp) firstExp.classList.add('expanded');
+}
+
+// ===== DARK MODE TOGGLE =====
+(function darkModeToggle() {
+    const toggle = document.getElementById('themeToggle');
+    const icon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    // Check saved preference or system preference
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.setAttribute('data-theme', 'dark');
+        icon.textContent = '☽';
+    }
+
+    toggle.addEventListener('click', () => {
+        const isDark = html.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+            html.removeAttribute('data-theme');
+            icon.textContent = '☀';
+            localStorage.setItem('theme', 'light');
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            icon.textContent = '☽';
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+})();
+
+// ===== WIGGLE HINT + CURSOR TRAIL =====
+document.addEventListener('boot-complete', function() {
+    if (window.innerWidth <= 640) return;
+
+    const mainNode = document.querySelector('[data-node="main"]');
+    if (!mainNode) return;
+
+    // Wiggle the main node after a short delay
+    setTimeout(() => {
+        mainNode.classList.add('wiggle');
+        mainNode.addEventListener('animationend', () => {
+            mainNode.classList.remove('wiggle');
+        }, { once: true });
+    }, 800);
+
+    // Cursor trail animation — shows a fake cursor dragging a node
+    if (sessionStorage.getItem('cursorHintSeen')) return;
+    sessionStorage.setItem('cursorHintSeen', '1');
+
+    setTimeout(() => {
+        const hint = document.getElementById('cursorHint');
+        if (!hint) return;
+
+        const rect = mainNode.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2;
+        const startY = rect.top + 30;
+        const moveDistance = 60;
+
+        hint.style.left = startX + 'px';
+        hint.style.top = startY + 'px';
+        hint.classList.add('active');
+
+        // Animate the cursor moving right
+        let progress = 0;
+        const duration = 1200;
+        const startTime = performance.now();
+
+        function animateCursor(now) {
+            progress = Math.min((now - startTime) / duration, 1);
+            const eased = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+            const currentX = startX + eased * moveDistance;
+            hint.style.left = currentX + 'px';
+
+            if (progress < 1) {
+                requestAnimationFrame(animateCursor);
             } else {
-                textIndex = 0;
-                setTimeout(typeCommand, 500); // Delay before starting the next command (2 seconds)
+                // Fade out
+                setTimeout(() => {
+                    hint.style.transition = 'opacity 0.5s ease';
+                    hint.style.opacity = '0';
+                    setTimeout(() => hint.remove(), 600);
+                }, 400);
             }
         }
 
-        const skillsCommands = [
-            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \nSKILLS \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            'Languages  :\nJAVA, Python, C, SQL, Gherkins, JSLT, XML',
-            'Frameworks :\nSpring Boot, LAMP, CI/CD, Android, Cucumber, JUnit, TDD, BDD, Mockito, PowerMockito',
-            'Databases  :\nAzure SQL, Elastic Search, MongoDB, Azure Storage',
-            'Tools      :\nGIT, Apache Kafka, Jenkins, Sonar, Swagger, Kubernetes, Android Studio, Kibana',
-            ''
-        ];
+        requestAnimationFrame(animateCursor);
+    }, 2500); // start after wiggle finishes
+});
 
-        const skillsCommandsForWeb = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SKILLS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            'Languages  :     JAVA, Python, C, SQL, Gherkins, JSLT, XML',
-            'Frameworks :     Spring Boot, LAMP, CI/CD, Android, Cucumber, JUnit, TDD, BDD, Mockito, PowerMockito',
-            'Databases  :     Azure SQL, Elastic Search, MongoDB, Azure Storage',
-            'Tools      :     GIT, Apache Kafka, Jenkins, Sonar, Swagger, Kubernetes, Android Studio, Kibana',
-            ''
-        ];
+// ===== SVG CONNECTION LINES =====
+(function drawConnections() {
+    const connectionPairs = [
+        ['skills', 'main'],
+        ['main', 'metrics'],
+        ['main', 'infra'],
+        ['main', 'experience'],
+        ['contact', 'main'],
+        ['education', 'main'],
+        ['github', 'experience'],
+        ['awards', 'experience'],
+        ['status', 'infra'],
+    ];
 
-        const educationCommands = [
-            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \nEDUCATION \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            '\n >> B.Tech. Computer Science & Engineering \n  --  Indira Gandhi Delhi Technical University for Women (IGDTUW), Delhi \n  --  Year: 2021 \n  --  CPI: 84.69%',
-            '\n >> 10+2 \n  --  LRS DAV Sr Sec Model School, Abohar (Punjab) \n  --  Year: 2017 \n  --  Percentage: 91.60%',
-            ''
-        ];
+    const svg = document.getElementById('connectionsLayer');
+    if (!svg) return;
 
-        const educationCommandsForWeb = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EDUCATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            'B.Tech. Computer Science & Engineering',
-            '   >>  Indira Gandhi Delhi Technical University for Women (IGDTUW), Delhi',
-            '   >>  Year: 2021',
-            '   >>  CPI: 84.69%',
-            '',
-            '10+2',
-            '   >>  LRS DAV Sr Sec Model School, Abohar (Punjab)',
-            '   >>  Year: 2017',
-            '   >>  Percentage: 91.60%',
-            ''
-        ];
+    let flowDots = [];
+    let animFrameId;
 
-        const experienceCommands = [
-            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \nEXPERIENCE \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            '\n >>>> Walmart Global Tech Services \n ---->  Bangalore \n --  SDE III \n  ~  (August, 2023 - present) \n --  SDE II \n  ~  (July, 2021 - July, 2023)',
-            '\n >>>> American Express \n ---->  Remote \n --  Technology Intern  \n  ~  (May, 2020 - July, 2020)',
-            '\n*** \nSDE = Software Development Engineer \nMore information in resume \n***',
-            ''
-        ];
+    function getNodeCenter(dataNode) {
+        const el = document.querySelector('[data-node="' + dataNode + '"]');
+        if (!el) return null;
+        const grid = document.getElementById('layoutGrid');
+        const gridRect = grid.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        // Account for dragged position
+        const dragLeft = parseFloat(el.style.left) || 0;
+        const dragTop = parseFloat(el.style.top) || 0;
+        return {
+            x: elRect.left - gridRect.left + elRect.width / 2,
+            y: elRect.top - gridRect.top + elRect.height / 2
+        };
+    }
 
-        const experienceCommandsForWeb = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ EXPERIENCE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            'Walmart Global Tech Services (India) Pvt. Ltd.',
-            '   >>  Bangalore',
-            '       --  Software Development Engineer III   (August, 2023 - present)',
-            '       --  Software Development Engineer II    (July, 2021 - July, 2023)',
-            '',
-            'American Express (India) Pvt. Ltd. ',
-            '   >>  Remote',
-            '       --  Technology Intern                   (May, 2020 - July, 2020)',
-            '',
-            '---- More information in resume ----',
-            ''
-        ];
+    function redraw() {
+        // Clear existing paths
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        flowDots = [];
 
-        const projectsCommands = [
-            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n PROJECTS \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            ' \n >> Chatbot for last mile delivery team \n -- used Walmart\'s homegrown bot-builder \n -- integrates with micro-services to fetch real-time item delivery data \n -- provides quick resolution for last-mile delivery issues \n -- helps delivery support team with high volume of calls',
-            ' \n >> Gamifying shopping experience of Walmart web users \n -- designed & built backend for gaming campaigns \n -- implemented authentication flows for web users \n -- helps in increasing organic traffic',
-            ''
-        ];
+        const grid = document.getElementById('layoutGrid');
+        if (!grid) return;
+        const gridRect = grid.getBoundingClientRect();
+        svg.setAttribute('viewBox', '0 0 ' + gridRect.width + ' ' + gridRect.height);
+        svg.style.width = gridRect.width + 'px';
+        svg.style.height = gridRect.height + 'px';
 
-        const projectsCommandsForWeb = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PROJECTS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            ' >> Chatbot for last mile delivery team',
-            '       -- used Walmart\'s homegrown bot-builder',
-            '       -- integrates with micro-services to fetch real-time item delivery data',
-            '       -- provides quick resolution for last-mile delivery issues',
-            '       -- helps delivery support team with high volume of calls',
-            '',
-            ' >> Gamifying shopping experience of Walmart web users',
-            '       -- designed & built backend for gaming campaigns',
-            '       -- implemented authentication flows for web users',
-            '       -- helps in increasing organic traffic',
-            ''
-        ];
+        connectionPairs.forEach(function(pair) {
+            const from = getNodeCenter(pair[0]);
+            const to = getNodeCenter(pair[1]);
+            if (!from || !to) return;
 
-        const contactCommands = [
-            '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n CONTACT \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            ' >> email    :\npriyashasetia99@gmail.com',
-            ' >> linkedIn :\nhttps://linkedin.com/in/priyashasetia/',
-            ' >> github   :\nhttps://github.com/priyasha99',
-            ' >> leetcode :\nhttps://leetcode.com/prs99/',
-            ''
-        ];
+            // Create curved path
+            const midX = (from.x + to.x) / 2;
+            const midY = (from.y + to.y) / 2;
+            const dx = to.x - from.x;
+            const dy = to.y - from.y;
+            // Offset the control point perpendicular to the line
+            const offsetAmount = Math.min(Math.abs(dx), Math.abs(dy)) * 0.3;
+            const cx = midX - (dy > 0 ? offsetAmount : -offsetAmount) * 0.5;
+            const cy = midY + (dx > 0 ? offsetAmount : -offsetAmount) * 0.5;
 
-        const contactCommandsForWeb = [
-            '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONTACT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~',
-            ' >> email    :    priyashasetia99@gmail.com',
-            '    >> linkedIn :    https://linkedin.com/in/priyashasetia/',
-            '       >> github   :    https://github.com/priyasha99',
-            '          >> leetcode :    https://leetcode.com/prs99/',
-            ''
-        ];
+            const pathD = 'M ' + from.x + ' ' + from.y + ' Q ' + cx + ' ' + cy + ' ' + to.x + ' ' + to.y;
 
-        let sectionCommandText = '';
-        let sectionTextIndex = 0;
-        let isTypingSectionCommands = false;
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('class', 'conn-path');
+            path.setAttribute('d', pathD);
+            svg.appendChild(path);
 
-        // Function to type section commands
-        function typeSectionCommands(sectionCommands) {
-            if (!isTypingSectionCommands) {
-                isTypingSectionCommands = true;
-                let sectionCommandIndex = 0;
+            // Flowing dot
+            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dot.setAttribute('r', '3');
+            dot.setAttribute('class', 'conn-dot flowing');
+            svg.appendChild(dot);
 
-                function typeNextSectionCommand() {
-                    if (sectionCommandIndex < sectionCommands.length) {
-                        sectionCommandText = sectionCommands[sectionCommandIndex];
-                        const newLine = document.createElement('div');
-                        newLine.innerHTML = `<span class="text-green-400">user@localhost</span>:~$ `;
-                        terminal.appendChild(newLine);
-                        const commandLine = document.createElement('span');
-                        newLine.appendChild(commandLine);
-                        typeSectionText(commandLine, sectionCommandText);
-                        sectionCommandIndex++;
-                    } else {
-                        isTypingSectionCommands = false; // Enable buttons once all section commands are typed
-                    }
-                }
-
-                typeNextSectionCommand(); // Start typing the first command
-
-                // Type the next section command after a delay
-                function typeSectionText(element, text) {
-                    if (sectionTextIndex < text.length) {
-                        element.textContent += text.charAt(sectionTextIndex);
-                        sectionTextIndex++;
-                        setTimeout(() => typeSectionText(element, text), 10); // Adjust typing speed (milliseconds)
-                    } else {
-                        sectionTextIndex = 0;
-                        setTimeout(typeNextSectionCommand, 500); // Delay before starting the next section command (2 seconds)
-                    }
-                }
-            }
-        }
-
-        // Function to display center-aligned buttons
-        function displayButtons() {
-            const buttonContainer = document.createElement('div');
-            buttonContainer.classList.add('text-center', 'mt-4');
-            buttonContainer.style.marginBottom = '20px'; // Add margin to create space
-
-            const button1 = document.createElement('button');
-            button1.id = 'button1';
-            button1.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2');
-            button1.textContent = 'Skills';
-
-            const button2 = document.createElement('button');
-            button2.id = 'button2';
-            button2.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2', 'mb-2');
-            button2.textContent = 'Education';
-
-            const button3 = document.createElement('button');
-            button3.id = 'button3';
-            button3.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2', 'mb-2');
-            button3.textContent = 'Experience';
-
-            const button4 = document.createElement('button');
-            button4.id = 'button4';
-            button4.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2', 'mb-2');
-            button4.textContent = 'Projects';
-
-            const button5 = document.createElement('button');
-            button5.id = 'button5';
-            button5.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mr-2', 'mb-2');
-            button5.textContent = 'Contact';
-
-            const button6 = document.createElement('button');
-            button6.id = 'button6';
-            button6.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mb-2');
-            button6.textContent = 'Resume';
-
-            buttonContainer.appendChild(button1);
-            buttonContainer.appendChild(button2);
-            buttonContainer.appendChild(button3);
-            buttonContainer.appendChild(button4);
-            buttonContainer.appendChild(button5);
-            buttonContainer.appendChild(button6);
-
-            terminal.appendChild(buttonContainer);
-
-            // Event listener for Button 1
-            button1.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    typeSectionCommands(skillsCommands);
-                } else {
-                    typeSectionCommands(skillsCommandsForWeb);
-                }
+            flowDots.push({
+                dot: dot,
+                path: path,
+                progress: Math.random(), // stagger start positions
+                speed: 0.002 + Math.random() * 0.002
             });
+        });
+    }
 
-            // Event listener for Button 2
-            button2.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    typeSectionCommands(educationCommands);
-                } else {
-                    typeSectionCommands(educationCommandsForWeb);
-                }
-            });
+    function animateFlow() {
+        flowDots.forEach(function(fd) {
+            fd.progress += fd.speed;
+            if (fd.progress > 1) fd.progress = 0;
+            try {
+                const pathLen = fd.path.getTotalLength();
+                const pt = fd.path.getPointAtLength(fd.progress * pathLen);
+                fd.dot.setAttribute('cx', pt.x);
+                fd.dot.setAttribute('cy', pt.y);
+            } catch (e) {}
+        });
+        animFrameId = requestAnimationFrame(animateFlow);
+    }
 
-            // Event listener for Button 3
-            button3.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    typeSectionCommands(experienceCommands);
-                } else {
-                    typeSectionCommands(experienceCommandsForWeb);
-                }
-            });
+    // Draw after boot
+    document.addEventListener('boot-complete', function() {
+        setTimeout(function() {
+            redraw();
+            animateFlow();
+        }, 200);
+    });
 
-            // Event listener for Button 4
-            button4.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    typeSectionCommands(projectsCommands);
-                } else {
-                    typeSectionCommands(projectsCommandsForWeb);
-                }
-            });
+    // Redraw on window resize
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(redraw, 200);
+    });
 
-            // Event listener for Button 5
-            button5.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    typeSectionCommands(contactCommands);
-                } else {
-                    typeSectionCommands(contactCommandsForWeb);
-                }
-            });
+    // Redraw when nodes are dragged — hook into mouseup
+    document.addEventListener('mouseup', function() {
+        setTimeout(redraw, 50);
+    });
+})();
 
-            // Event listener for Resume button
-            button6.addEventListener('click', () => {
-                // Redirect the user to the specified link
-                window.location.href = 'https://drive.google.com/file/d/1IkHn6vu-JFv6_Kb94eEurOLyLRnwj1Ag/view';
-            });
-        }
-
-        // Start typing the initial command
-        typeCommand();
-    </script>
-
-    <!-- Padding for the bottom of the body content -->
-    <div style="padding-bottom: 60px;"></div>
-
-    <!-- Footer with fixed position -->
-    <div class="bg-gray-900 text-center py-4" style="position: fixed; bottom: 0; left: 0; width: 100%;">
-        <p class="text-sm">&copy; 2023 Priyasha Setia. All rights reserved.</p>
-    </div>
+</script>
 
 </body>
 </html>
