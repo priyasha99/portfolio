@@ -391,6 +391,9 @@
             max-height: 400px;
             opacity: 1;
         }
+        .exp-entry.expanded .exp-details.exp-details-long {
+            max-height: 1200px;
+        }
         .exp-detail-item {
             display: flex;
             align-items: baseline;
@@ -399,6 +402,14 @@
             font-size: 13px;
             color: var(--text-secondary);
             line-height: 1.5;
+        }
+        .exp-detail-item .exp-detail-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .exp-detail-item .exp-detail-label {
+            font-weight: 600;
+            color: var(--text-primary);
         }
         .exp-detail-item::before {
             content: '+';
@@ -1119,12 +1130,12 @@
                         <span class="exp-date">Jun 2024 → present</span>
                     </div>
                     <div class="exp-expand-hint">click to expand ↓</div>
-                    <div class="exp-details">
-                        <div class="exp-detail-item">Spearheaded architectural shift from monolith to microservices for Custom Form Styles platform</div>
-                        <div class="exp-detail-item">Migrated 7M+ customers from PostgreSQL to DynamoDB with 100% data parity</div>
-                        <div class="exp-detail-item">System handles 1,200 TPS peak loads at 99.9% availability</div>
-                        <div class="exp-detail-item">Built RAG-based RTB automation suite with Jira Cloud &amp; Slack hooks</div>
-                        <div class="exp-detail-item">Conducted 30+ customer interviews for the MCI initiative</div>
+                    <div class="exp-details exp-details-long">
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Platform Modernization:</span> Spearheaded the architectural shift of the Custom Form Styles (CFS) platform from a legacy QBO monolith to a scalable microservices architecture.</span></div>
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Massive Scale Migration:</span> Orchestrated the seamless data migration of 7M+ customers from PostgreSQL to DynamoDB. Developed a robust data-sync pipeline to ensure 100% data parity during the transition.</span></div>
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">System Resilience:</span> Conducted extensive traffic analysis and load testing to ensure the new system could handle peak loads of 1,200 TPS, maintaining 99.9% availability for P0 business assets (Invoices, Estimates, etc.).</span></div>
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Operational Efficiency:</span> Engineered an end-to-end RTB (Run the Business) automation suite using RAG-based internal tools, Jira Cloud automation, and Slack hooks, significantly reducing manual support overhead.</span></div>
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Customer Discovery:</span> Conducted 30+ customer interviews for the MCI initiative.</span></div>
                     </div>
                 </div>
                 <!-- Walmart SDE III -->
@@ -1152,18 +1163,12 @@
                         <span class="exp-date">Jul 2021 → Jul 2023</span>
                     </div>
                     <div class="exp-expand-hint">click to expand ↓</div>
-                    <div class="exp-details">
-                        <div class="exp-detail-item" style="font-weight:600; color:var(--text-primary); margin-top:4px;">Assortment Strategy Planner — Automated assortment planning feeding pre-trained ML models</div>
-                        <div class="exp-detail-item">End-to-end data ingestion pipeline for 38,000+ floor plans across 4,500+ stores</div>
-                        <div class="exp-detail-item">Innovative features: closed node alerting, dynamic data refresh, caching &amp; real-time data cleansing — elevating data accuracy to 95%</div>
-                        <div class="exp-detail-item">Blueprint versioning for manual edits with efficient floor plan re-usability</div>
-                        <div class="exp-detail-item">$225K revenue savings from a single department</div>
-                        <div class="exp-detail-item" style="font-weight:600; color:var(--text-primary); margin-top:10px;">Space as a Service — Enterprise ETL platform for diverse space data</div>
-                        <div class="exp-detail-item">Led design &amp; development of 5 out of 6 critical components in end-to-end microservices architecture</div>
-                        <div class="exp-detail-item">99% reduction in processing time for datasets exceeding 2MB across Walmart's global supply chain</div>
-                        <div class="exp-detail-item" style="font-weight:600; color:var(--text-primary); margin-top:10px;">Adjacency &amp; Proximity Validations — ML input layer for product placements</div>
-                        <div class="exp-detail-item">Engineered space element relationship logic across 4,500+ stores and 70+ departments</div>
-                        <div class="exp-detail-item">Decisively amplified precision and efficacy of ML-generated floor plans</div>
+                    <div class="exp-details exp-details-long">
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Scalable Data Ingestion:</span> Designed and deployed a high-scale pipeline for 38,000+ floor plans, feeding space data into ML models to optimize planning for 4,500+ stores.</span></div>
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Microservices Design:</span> Led the design of 5/6 critical components for an enterprise ETL platform, achieving a 99% reduction in processing time across Walmart&apos;s global supply chain.</span></div>
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Data Integrity &amp; Optimization:</span> Implemented dynamic refresh, blueprint versioning, and real-time cleansing, elevating data accuracy to 95% and enabling efficient floor plan re-usability.</span></div>
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Strategic Placement Logic:</span> Engineered comprehensive logic for proximity and adjacency validations across 70+ departments, providing decisive inputs to amplify ML model precision.</span></div>
+                        <div class="exp-detail-item"><span class="exp-detail-body"><span class="exp-detail-label">Business Impact:</span> Achieved $225,000 immediate revenue savings from a single department, with projected annual savings of $3 million through automated assortment planning.</span></div>
                     </div>
                 </div>
                 <!-- AmEx -->
