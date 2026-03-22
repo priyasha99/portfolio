@@ -1,0 +1,13 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer ring -->
+  <circle cx="40" cy="40" r="37" stroke="#374151" stroke-width="2"/>
+  <!-- Inner filled circle -->
+  <circle cx="40" cy="40" r="29" fill="#1f2937"/>
+  <!-- PS letters -->
+  <text x="40" y="48" font-family="JetBrains Mono, ui-monospace, monospace" font-size="21" font-weight="700" fill="white" text-anchor="middle" letter-spacing="-1">PS</text>
+  <!-- Accent dots -->
+  <circle cx="40" cy="3" r="3" fill="#3b82f6"/>
+  <circle cx="77" cy="40" r="3" fill="#8b5cf6"/>
+  <circle cx="40" cy="77" r="3" fill="#10b981"/>
+  <circle cx="3" cy="40" r="3" fill="#3b82f6"/>
+</svg>
